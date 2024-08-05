@@ -1,5 +1,4 @@
 ﻿using Basalt.Framework.Logging;
-using System.Reflection;
 
 namespace Basalt.BetterForms;
 
@@ -18,7 +17,7 @@ public class BasaltForm : Form
     /// </summary>
     public BasaltForm()
     {
-        CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version ?? new(0, 1, 0);
+        CurrentVersion = new Version(0, 1, 0);
         Text = $"Basalt Application v{CurrentVersion.ToString(3)}";
 
         Load += OnFormOpen;

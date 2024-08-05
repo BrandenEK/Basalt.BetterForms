@@ -29,7 +29,7 @@ public static class BasaltApplication
         TForm form = new();
         TCommand cmd = new();
 
-        form.CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version ?? new(0, 1, 0);
+        form.CurrentVersion = cmd.GetType().Assembly.GetName().Version ?? new(0, 1, 0);
         form.Text = $"{title} v{form.CurrentVersion.ToString(3)}";
 
         InitializeDirectories(directories);
@@ -65,7 +65,7 @@ public static class BasaltApplication
     /// </summary>
     private static void InitializeLogging(string title, string directory, BasaltCommand cmd)
     {
-        bool debug = cmd.DebugMode || Assembly.GetExecutingAssembly().GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(x => x.IsJITTrackingEnabled);
+        bool debug = cmd.DebugMode || cmd.GetType().Assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(x => x.IsJITTrackingEnabled);
 
         Logger.AddLogger(new FileLogger(directory));
         if (debug)
