@@ -39,12 +39,8 @@ public class BasaltForm : Form
 
     private void OnFormOpen(object? _, EventArgs e)
     {
-        // Apply window settings
-        WindowState = FormWindowState.Normal;
-        Location = new Point(0, 0);
-        Size = new Size(1280, 720);
+        OnFormOpenPre();
 
-        // Check for crash
         if (CrashException != null)
         {
             DisplayCrash(CrashException);
@@ -52,11 +48,12 @@ public class BasaltForm : Form
         }
         Application.ThreadException += (_, e) => DisplayCrash(e.Exception);
 
-        // Form specific code
-        OnFormOpen();
+        OnFormOpenPost();
     }
 
-    protected virtual void OnFormOpen() { }
+    protected virtual void OnFormOpenPre() { }
+
+    protected virtual void OnFormOpenPost() { }
 
     private void OnFormClose(object? _, FormClosingEventArgs e)
     {
