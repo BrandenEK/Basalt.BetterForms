@@ -15,7 +15,7 @@ public class BasaltForm : Form
         Text = $"Basalt Application v{CurrentVersion.ToString(3)}";
     }
 
-    public BasaltForm(BasaltCommand cmd, string title, IEnumerable<string> directories)
+    public BasaltForm(Action<BasaltCommand> init, BasaltCommand cmd, string title, IEnumerable<string> directories)
     {
         CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version ?? new(0, 1, 0);
         Text = $"{title} v{CurrentVersion.ToString(3)}";
@@ -23,6 +23,7 @@ public class BasaltForm : Form
         InitializeDirectories(directories);
         InitializeCommand(cmd);
         InitializeLogging(Text, directories.First(), cmd);
+        InitializeCore(init, cmd);
     }
 
     private static void InitializeDirectories(IEnumerable<string> directories)
@@ -33,14 +34,7 @@ public class BasaltForm : Form
 
     private static void InitializeCommand(BasaltCommand cmd)
     {
-        try
-        {
-            cmd.Process(Environment.GetCommandLineArgs());
-        }
-        catch (Exception ex)
-        {
-            CrashException = ex;
-        }
+        TryWithCrashHandling(() => cmd.Process(Environment.GetCommandLineArgs()));
     }
 
     private static void InitializeLogging(string title, string directory, BasaltCommand cmd)
@@ -50,6 +44,23 @@ public class BasaltForm : Form
         Logger.AddLogger(new FileLogger(directory));
         if (debug)
             Logger.AddLogger(new ConsoleLogger(title));
+    }
+
+    private static void InitializeCore(Action<BasaltCommand> init, BasaltCommand cmd)
+    {
+        TryWithCrashHandling(() => init(cmd));
+    }
+
+    private static void TryWithCrashHandling(Action action)
+    {
+        try
+        {
+            action();
+        }
+        catch (Exception ex)
+        {
+            CrashException = ex;
+        }
     }
 
     public static Exception? CrashException { get; private set; }
