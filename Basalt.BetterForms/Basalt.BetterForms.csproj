@@ -1,11 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>enable</ImplicitUsings>
+
+    <Title>Better Forms</Title>
+    <Authors>Damocles</Authors>
+    <Description>WinForms library for basalt applications</Description>
+    <Version>1.0.0</Version>
+
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <RepositoryUrl>https://github.com/BrandenEK/Basalt.BetterForms</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
