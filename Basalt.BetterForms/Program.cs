@@ -5,12 +5,13 @@ internal static class Program
     [STAThread]
     static void Main()
     {
+        ApplicationConfiguration.Initialize();
         TestCommand cmd = new();
 
-        BasaltForm.Initialize(cmd);
+        //BasaltForm.Initialize(cmd);
 
 
-        TestForm form = new();
+        TestForm form = new(cmd, "Basalt Application");
         Application.Run(form);
     }
 }

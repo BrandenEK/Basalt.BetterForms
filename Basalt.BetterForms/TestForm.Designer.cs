@@ -36,7 +36,6 @@ partial class TestForm
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(1264, 681);
         Name = "TestForm";
-        Text = "Test Basalt Form";
         ResumeLayout(false);
     }
 
