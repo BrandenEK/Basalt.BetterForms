@@ -4,10 +4,19 @@ namespace Basalt.BetterForms;
 
 public class BasaltForm : Form
 {
-    public static T Initialize<T>() where T : CommandData, new()
+    public static void Initialize(CommandData cmd)
     {
         ApplicationConfiguration.Initialize();
 
-        return new T();
+        try
+        {
+            cmd.Process(Environment.GetCommandLineArgs());
+        }
+        catch (Exception ex)
+        {
+            CrashException = ex;
+        }
     }
+
+    public static Exception? CrashException { get; private set; }
 }
