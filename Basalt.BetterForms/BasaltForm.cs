@@ -33,7 +33,7 @@ public class BasaltForm : Form
     /// <param name="cmd">Command args info</param>
     /// <param name="title">Title of the application</param>
     /// <param name="directories">Directories that need to be created</param>
-    public BasaltForm(Action<BasaltCommand> init, BasaltCommand cmd, string title, IEnumerable<string> directories)
+    public BasaltForm(Action<BasaltForm, BasaltCommand> init, BasaltCommand cmd, string title, IEnumerable<string> directories)
     {
         CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version ?? new(0, 1, 0);
         Text = $"{title} v{CurrentVersion.ToString(3)}";
@@ -41,9 +41,10 @@ public class BasaltForm : Form
         InitializeDirectories(directories);
         InitializeCommand(cmd);
         InitializeLogging(Text, directories.First(), cmd);
+        InitializeUI(this);
 
         Logger.Info($"Opening {Text}");
-        InitializeCore(init, cmd);
+        InitializeCore(init, this, cmd);
 
         Load += OnFormOpen;
         FormClosing += OnFormClose;
@@ -153,11 +154,20 @@ public class BasaltForm : Form
     }
 
     /// <summary>
+    /// Uses reflection to call the 'InitializeComponent method on the form
+    /// </summary>
+    private static void InitializeUI(BasaltForm form)
+    {
+        MethodInfo? method = form.GetType().GetMethod("InitializeComponent", BindingFlags.NonPublic | BindingFlags.Instance);
+        method?.Invoke(form, Array.Empty<object>());
+    }
+
+    /// <summary>
     /// Calls the InitCore method
     /// </summary>
-    private static void InitializeCore(Action<BasaltCommand> init, BasaltCommand cmd)
+    private static void InitializeCore(Action<BasaltForm, BasaltCommand> init, BasaltForm form, BasaltCommand cmd)
     {
-        TryWithCrashHandling(() => init(cmd));
+        TryWithCrashHandling(() => init(form, cmd));
     }
 
     private static void TryWithCrashHandling(Action action)
