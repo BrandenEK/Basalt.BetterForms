@@ -8,10 +8,9 @@ internal static class Program
         ApplicationConfiguration.Initialize();
         TestCommand cmd = new();
 
-        //BasaltForm.Initialize(cmd);
-
-
-        TestForm form = new(cmd, "Basalt Application");
+        TestForm form = new(cmd, "Basalt Application", ApplicationFolder);
         Application.Run(form);
     }
+
+    public static string ApplicationFolder { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BasaltTest");
 }
