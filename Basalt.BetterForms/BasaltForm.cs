@@ -17,7 +17,6 @@ public class BasaltForm : Form
 
     public BasaltForm(BasaltCommand cmd, string title, string directory)
     {
-        // Initialize form properties
         CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version ?? new(0, 1, 0);
         Text = $"{title} v{CurrentVersion.ToString(3)}";
 
@@ -25,7 +24,7 @@ public class BasaltForm : Form
         InitializeLogging(Text, directory, cmd);
     }
 
-    private void InitializeCommand(BasaltCommand cmd)
+    private static void InitializeCommand(BasaltCommand cmd)
     {
         try
         {
@@ -37,7 +36,7 @@ public class BasaltForm : Form
         }
     }
 
-    private void InitializeLogging(string title, string directory, BasaltCommand cmd)
+    private static void InitializeLogging(string title, string directory, BasaltCommand cmd)
     {
         bool debug = cmd.DebugMode || Assembly.GetExecutingAssembly().GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(x => x.IsJITTrackingEnabled);
 
