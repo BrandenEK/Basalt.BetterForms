@@ -5,6 +5,7 @@ Implements logging, crash handling, and command parsing in a WinForms applicatio
 ### Program.cs
 
 ```cs
+using Basalt.BetterForms;
 using Basalt.Framework.Logging;
 
 namespace ExampleApplication;
@@ -14,17 +15,14 @@ internal static class Program
     [STAThread]
     static void Main()
     {
-        ApplicationConfiguration.Initialize();
-        Application.Run(new TestForm(InitializeCore, new TestCommand(), "Test Application", new string[]
+        BasaltApplication.Run<TestForm, TestCommand>(InitializeCore, "Test Application", new string[]
         {
             ApplicationFolder, ApplicationSubFolder
-        }));
+        });
     }
 
-    static void InitializeCore(BasaltCommand cmd)
+    static void InitializeCore(TestForm form, TestCommand cmd)
     {
-        TestCommand testCmd = (TestCommand)cmd;
-
         Logger.Info($"Test arg: {testCmd.TestArg}");
     }
 
@@ -35,17 +33,13 @@ internal static class Program
 
 ### TestForm.cs
 ```cs
+using Basalt.BetterForms;
 using Basalt.Framework.Logging;
 
 namespace ExampleApplication;
 
 public partial class TestForm : BasaltForm
 {
-    public TestForm(Action<BasaltCommand> init, TestCommand cmd, string title, IEnumerable<string> directories) : base(init, cmd, title, directories)
-    {
-        InitializeComponent();
-    }
-
     protected override void OnFormOpenPre()
     {
         WindowState = FormWindowState.Normal;
@@ -62,6 +56,7 @@ public partial class TestForm : BasaltForm
 
 ### TestCommand.cs
 ```cs
+using Basalt.BetterForms;
 using Basalt.CommandParser;
 
 namespace ExampleApplication;
