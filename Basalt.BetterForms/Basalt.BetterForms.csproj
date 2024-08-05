@@ -9,7 +9,7 @@
     <Title>Better Forms</Title>
     <Authors>Damocles</Authors>
     <Description>WinForms library for basalt applications</Description>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
 
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
