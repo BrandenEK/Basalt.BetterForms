@@ -16,10 +16,11 @@ internal static class Program
 
     static void InitHandlers(BasaltCommand cmd)
     {
-        TestCommand testCmd = cmd as TestCommand;
+        TestCommand testCmd = (TestCommand)cmd;
 
         Logger.Debug("Starting init handlers");
         Logger.Info($"Test arg: {testCmd.TestArg}");
+        //throw new Exception("Test ex");
         Logger.Debug("Finishing init handlers");
     }
 

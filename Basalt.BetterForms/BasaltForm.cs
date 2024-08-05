@@ -9,6 +9,8 @@ public class BasaltForm : Form
 {
     public Version CurrentVersion { get; }
 
+    #region Contructors
+
     internal BasaltForm()
     {
         CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version ?? new(0, 1, 0);
@@ -24,7 +26,34 @@ public class BasaltForm : Form
         InitializeCommand(cmd);
         InitializeLogging(Text, directories.First(), cmd);
         InitializeCore(init, cmd);
+
+        Load += OnFormOpen;
+        FormClosing += OnFormClose;
     }
+
+    #endregion Contructors
+
+    #region Events
+
+    private void OnFormOpen(object? _, EventArgs e)
+    {
+        Logger.Warn("Form open");
+        OnFormOpen();
+    }
+
+    protected virtual void OnFormOpen() { }
+
+    private void OnFormClose(object? _, FormClosingEventArgs e)
+    {
+        Logger.Warn("Form close");
+        OnFormClose(e);
+    }
+
+    protected virtual void OnFormClose(FormClosingEventArgs e) { }
+
+    #endregion Events
+
+    #region Initialization
 
     private static void InitializeDirectories(IEnumerable<string> directories)
     {
@@ -62,6 +91,8 @@ public class BasaltForm : Form
             CrashException = ex;
         }
     }
+
+    #endregion Initialization
 
     public static Exception? CrashException { get; private set; }
 }
