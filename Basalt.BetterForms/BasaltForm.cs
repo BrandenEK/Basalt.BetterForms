@@ -1,5 +1,4 @@
-﻿using Basalt.CommandParser;
-using Basalt.Framework.Logging;
+﻿using Basalt.Framework.Logging;
 using Basalt.Framework.Logging.Standard;
 using System.Diagnostics;
 using System.Reflection;
@@ -16,7 +15,7 @@ public class BasaltForm : Form
         Text = $"Basalt Application v{CurrentVersion.ToString(3)}";
     }
 
-    public BasaltForm(CommandData cmd, string title, string directory)
+    public BasaltForm(BasaltCommand cmd, string title, string directory)
     {
         // Initialize form properties
         CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version ?? new(0, 1, 0);
@@ -26,7 +25,7 @@ public class BasaltForm : Form
         InitializeLogging(Text, directory, cmd);
     }
 
-    private void InitializeCommand(CommandData cmd)
+    private void InitializeCommand(BasaltCommand cmd)
     {
         try
         {
@@ -38,9 +37,9 @@ public class BasaltForm : Form
         }
     }
 
-    private void InitializeLogging(string title, string directory, CommandData cmd)
+    private void InitializeLogging(string title, string directory, BasaltCommand cmd)
     {
-        bool debug = Assembly.GetExecutingAssembly().GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(x => x.IsJITTrackingEnabled);
+        bool debug = cmd.DebugMode || Assembly.GetExecutingAssembly().GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(x => x.IsJITTrackingEnabled);
 
         Logger.AddLogger(new FileLogger(directory));
         if (debug)
