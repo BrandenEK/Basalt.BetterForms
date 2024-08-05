@@ -57,8 +57,16 @@ public class BasaltForm : Form
 
     private void OnFormClose(object? _, FormClosingEventArgs e)
     {
+        if (CrashException != null)
+        {
+            Logger.Info($"Closing {Text}");
+            return;
+        }
+
         OnFormClose(e);
-        Logger.Info($"Closing {Text}");
+
+        if (!e.Cancel)
+            Logger.Info($"Closing {Text}");
     }
 
     protected virtual void OnFormClose(FormClosingEventArgs e) { }
