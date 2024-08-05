@@ -25,6 +25,8 @@ public class BasaltForm : Form
         InitializeDirectories(directories);
         InitializeCommand(cmd);
         InitializeLogging(Text, directories.First(), cmd);
+
+        Logger.Info($"Opening {Text}");
         InitializeCore(init, cmd);
 
         Load += OnFormOpen;
@@ -37,7 +39,20 @@ public class BasaltForm : Form
 
     private void OnFormOpen(object? _, EventArgs e)
     {
-        Logger.Warn("Form open");
+        // Apply window settings
+        WindowState = FormWindowState.Normal;
+        Location = new Point(0, 0);
+        Size = new Size(1280, 720);
+
+        // Check for crash
+        if (CrashException != null)
+        {
+            DisplayCrash(CrashException);
+            return;
+        }
+        Application.ThreadException += (_, e) => DisplayCrash(e.Exception);
+
+        // Form specific code
         OnFormOpen();
     }
 
@@ -45,13 +60,26 @@ public class BasaltForm : Form
 
     private void OnFormClose(object? _, FormClosingEventArgs e)
     {
-        Logger.Warn("Form close");
         OnFormClose(e);
+        Logger.Info($"Closing {Text}");
     }
 
     protected virtual void OnFormClose(FormClosingEventArgs e) { }
 
     #endregion Events
+
+    #region Crash handling
+
+    public static Exception? CrashException { get; private set; }
+
+    private static void DisplayCrash(Exception ex)
+    {
+        Logger.Fatal($"A crash has occured: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+        MessageBox.Show(ex.ToString(), "A crash has occured", MessageBoxButtons.OK);
+        Application.Exit();
+    }
+
+    #endregion Crash handling
 
     #region Initialization
 
@@ -93,6 +121,4 @@ public class BasaltForm : Form
     }
 
     #endregion Initialization
-
-    public static Exception? CrashException { get; private set; }
 }

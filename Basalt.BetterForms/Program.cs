@@ -20,7 +20,6 @@ internal static class Program
 
         Logger.Debug("Starting init handlers");
         Logger.Info($"Test arg: {testCmd.TestArg}");
-        //throw new Exception("Test ex");
         Logger.Debug("Finishing init handlers");
     }
 
