@@ -8,4 +8,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Basalt.CommandParser" Version="1.0.1" />
+    <PackageReference Include="Basalt.Framework.Logging" Version="1.1.1" />
+  </ItemGroup>
+
 </Project>
