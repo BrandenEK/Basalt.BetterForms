@@ -15,13 +15,20 @@ public class BasaltForm : Form
         Text = $"Basalt Application v{CurrentVersion.ToString(3)}";
     }
 
-    public BasaltForm(BasaltCommand cmd, string title, string directory)
+    public BasaltForm(BasaltCommand cmd, string title, IEnumerable<string> directories)
     {
         CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version ?? new(0, 1, 0);
         Text = $"{title} v{CurrentVersion.ToString(3)}";
 
+        InitializeDirectories(directories);
         InitializeCommand(cmd);
-        InitializeLogging(Text, directory, cmd);
+        InitializeLogging(Text, directories.First(), cmd);
+    }
+
+    private static void InitializeDirectories(IEnumerable<string> directories)
+    {
+        foreach (var dir in directories)
+            Directory.CreateDirectory(dir);
     }
 
     private static void InitializeCommand(BasaltCommand cmd)
