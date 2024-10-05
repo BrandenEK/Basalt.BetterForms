@@ -1,5 +1,6 @@
 ﻿using Basalt.Framework.Logging;
 using Basalt.Framework.Logging.Standard;
+using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -17,10 +18,11 @@ public static class BasaltApplication
     /// </summary>
     /// <typeparam name="TForm">The type of form to create</typeparam>
     /// <typeparam name="TCommand">The type of command to create</typeparam>
+    /// <typeparam name="TConfig">The type of config to create</typeparam>
     /// <param name="init">Initialization method to run after the form is created</param>
     /// <param name="title">Title of the application</param>
     /// <param name="directories">Directories that need to be created</param>
-    public static void Run<TForm, TCommand>(Action<TForm, TCommand> init, string title, IEnumerable<string> directories) where TForm : BasaltForm, new() where TCommand : BasaltCommand, new()
+    public static void Run<TForm, TCommand, TConfig>(Action<TForm, TCommand> init, string title, IEnumerable<string> directories) where TForm : BasaltForm, new() where TCommand : BasaltCommand, new() where TConfig : BasaltConfig, new()
     {
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
@@ -35,6 +37,7 @@ public static class BasaltApplication
         InitializeDirectories(directories);
         InitializeCommand(cmd);
         InitializeLogging(form.Text, directories.First(), cmd);
+        InitializeConfig<TConfig>(directories.First());
         InitializeUI(form);
 
         Logger.Info($"Opening {form.Text}");
@@ -70,6 +73,14 @@ public static class BasaltApplication
         Logger.AddLogger(new FileLogger(directory));
         if (debug)
             Logger.AddLogger(new ConsoleLogger(title));
+    }
+
+    /// <summary>
+    /// Parses the configuration file
+    /// </summary>
+    private static void InitializeConfig<TConfig>(string directory) where TConfig : BasaltConfig, new()
+    {
+        BasaltConfig.Load<TConfig>(directory);
     }
 
     /// <summary>
