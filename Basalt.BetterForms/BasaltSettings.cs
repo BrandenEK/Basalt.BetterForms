@@ -12,7 +12,6 @@ public class BasaltSettings
     internal WindowState Window { get; set; } = new();
 
     internal static BasaltSettings CurrentConfig { get; set; } = new();
-    private static string? _configPath;
 
     internal class WindowState
     {
@@ -26,8 +25,7 @@ public class BasaltSettings
     /// </summary>
     public void Save()
     {
-        if (_configPath == null)
-            return;
+        string path = Path.Combine(BasaltApplication.MainDirectory, "Settings.cfg");
 
         JsonSerializerSettings settings = new()
         {
@@ -36,20 +34,20 @@ public class BasaltSettings
         };
 
         string json = JsonConvert.SerializeObject(this, settings);
-        File.WriteAllText(_configPath, json);
+        File.WriteAllText(path, json);
     }
 
     internal static void Load<TConfig>(string directory) where TConfig : BasaltSettings, new()
     {
-        _configPath = Path.Combine(directory, "Settings.cfg");
+        string path = Path.Combine(BasaltApplication.MainDirectory, "Settings.cfg");
 
         try
         {
-            CurrentConfig = JsonConvert.DeserializeObject<TConfig>(File.ReadAllText(_configPath))!;
+            CurrentConfig = JsonConvert.DeserializeObject<TConfig>(File.ReadAllText(path))!;
         }
         catch
         {
-            Logger.Error($"Failed to read config from {_configPath}");
+            Logger.Error($"Failed to read config from {path}");
             CurrentConfig = new TConfig();
         }
 

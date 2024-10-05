@@ -12,6 +12,8 @@ public static class BasaltApplication
 {
     internal static Exception? CrashException { get; set; }
 
+    internal static string MainDirectory { get; set; } = Environment.CurrentDirectory;
+
     /// <summary>
     /// Begins running a basalt application on the main thread
     /// </summary>
@@ -31,13 +33,14 @@ public static class BasaltApplication
         TCommand cmd = new();
         TSettings settings = new();
 
+        MainDirectory = directories.First();
         form.CurrentVersion = cmd.GetType().Assembly.GetName().Version ?? new(0, 1, 0);
         form.Text = $"{title} v{form.CurrentVersion.ToString(3)}";
 
         InitializeDirectories(directories);
         InitializeCommand(cmd);
-        InitializeLogging(form.Text, directories.First(), cmd);
-        InitializeConfig<TSettings>(directories.First());
+        InitializeLogging(form.Text, MainDirectory, cmd);
+        InitializeConfig<TSettings>(MainDirectory);
         InitializeUI(form);
 
         Logger.Info($"Opening {form.Text}");
