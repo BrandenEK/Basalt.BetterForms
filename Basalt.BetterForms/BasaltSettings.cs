@@ -7,11 +7,11 @@ namespace Basalt.BetterForms;
 /// <summary>
 /// A configuration object that stores window settings
 /// </summary>
-public class BasaltConfig
+public class BasaltSettings
 {
     internal WindowState Window { get; set; } = new();
 
-    internal static BasaltConfig CurrentConfig { get; set; } = new();
+    internal static BasaltSettings CurrentConfig { get; set; } = new();
     private static string? _configPath;
 
     internal class WindowState
@@ -39,7 +39,7 @@ public class BasaltConfig
         File.WriteAllText(_configPath, json);
     }
 
-    internal static void Load<TConfig>(string directory) where TConfig : BasaltConfig, new()
+    internal static void Load<TConfig>(string directory) where TConfig : BasaltSettings, new()
     {
         _configPath = Path.Combine(directory, "Settings.cfg");
 

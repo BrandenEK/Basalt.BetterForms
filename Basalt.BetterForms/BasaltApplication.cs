@@ -1,6 +1,5 @@
 ﻿using Basalt.Framework.Logging;
 using Basalt.Framework.Logging.Standard;
-using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -18,11 +17,11 @@ public static class BasaltApplication
     /// </summary>
     /// <typeparam name="TForm">The type of form to create</typeparam>
     /// <typeparam name="TCommand">The type of command to create</typeparam>
-    /// <typeparam name="TConfig">The type of config to create</typeparam>
+    /// <typeparam name="TSettings">The type of settings to create</typeparam>
     /// <param name="init">Initialization method to run after the form is created</param>
     /// <param name="title">Title of the application</param>
     /// <param name="directories">Directories that need to be created</param>
-    public static void Run<TForm, TCommand, TConfig>(Action<TForm, TCommand> init, string title, IEnumerable<string> directories) where TForm : BasaltForm, new() where TCommand : BasaltCommand, new() where TConfig : BasaltConfig, new()
+    public static void Run<TForm, TCommand, TSettings>(Action<TForm, TCommand, TSettings> init, string title, IEnumerable<string> directories) where TForm : BasaltForm, new() where TCommand : BasaltCommand, new() where TSettings : BasaltSettings, new()
     {
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
@@ -30,6 +29,7 @@ public static class BasaltApplication
 
         TForm form = new();
         TCommand cmd = new();
+        TSettings settings = new();
 
         form.CurrentVersion = cmd.GetType().Assembly.GetName().Version ?? new(0, 1, 0);
         form.Text = $"{title} v{form.CurrentVersion.ToString(3)}";
@@ -37,11 +37,11 @@ public static class BasaltApplication
         InitializeDirectories(directories);
         InitializeCommand(cmd);
         InitializeLogging(form.Text, directories.First(), cmd);
-        InitializeConfig<TConfig>(directories.First());
+        InitializeConfig<TSettings>(directories.First());
         InitializeUI(form);
 
         Logger.Info($"Opening {form.Text}");
-        InitializeCore(init, form, cmd);
+        InitializeCore(init, form, cmd, settings);
 
         Application.Run(form);
     }
@@ -78,9 +78,9 @@ public static class BasaltApplication
     /// <summary>
     /// Parses the configuration file
     /// </summary>
-    private static void InitializeConfig<TConfig>(string directory) where TConfig : BasaltConfig, new()
+    private static void InitializeConfig<TSettings>(string directory) where TSettings : BasaltSettings, new()
     {
-        BasaltConfig.Load<TConfig>(directory);
+        BasaltSettings.Load<TSettings>(directory);
     }
 
     /// <summary>
@@ -95,9 +95,9 @@ public static class BasaltApplication
     /// <summary>
     /// Calls the InitCore method
     /// </summary>
-    private static void InitializeCore<TForm, TCommand>(Action<TForm, TCommand> init, TForm form, TCommand cmd)
+    private static void InitializeCore<TForm, TCommand, TSettings>(Action<TForm, TCommand, TSettings> init, TForm form, TCommand cmd, TSettings settings)
     {
-        TryWithCrashHandling(() => init(form, cmd));
+        TryWithCrashHandling(() => init(form, cmd, settings));
     }
 
     private static void TryWithCrashHandling(Action action)
