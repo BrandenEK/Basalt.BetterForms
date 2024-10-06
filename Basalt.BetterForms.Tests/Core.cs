@@ -13,7 +13,6 @@ internal static class Core
 
     static void InitializeCore(TestForm form, TestCommand cmd, TestSettings settings)
     {
-
     }
 
     public static string MainFolder { get; } = Path.Combine(Environment.CurrentDirectory, "MainFolder");
