@@ -9,6 +9,9 @@ namespace Basalt.BetterForms;
 /// </summary>
 public class BasaltSettings
 {
+    /// <summary>
+    /// The window settings
+    /// </summary>
     public WindowSettings Window { get; set; } = new();
 
     internal static TSettings Load<TSettings>() where TSettings : BasaltSettings, new()
@@ -43,11 +46,25 @@ public class BasaltSettings
         string json = JsonConvert.SerializeObject(settings, jss);
         File.WriteAllText(path, json);
     }
-}
 
-public class WindowSettings
-{
-    public Point Location { get; set; }
-    public Size Size { get; set; }
-    public bool IsMaximized { get; set; } = true;
+    /// <summary>
+    /// Settings related to the form window
+    /// </summary>
+    public class WindowSettings
+    {
+        /// <summary>
+        /// The form location
+        /// </summary>
+        public Point Location { get; set; }
+
+        /// <summary>
+        /// The form size
+        /// </summary>
+        public Size Size { get; set; }
+
+        /// <summary>
+        /// Is the form maximized
+        /// </summary>
+        public bool IsMaximized { get; set; } = true;
+    }
 }
