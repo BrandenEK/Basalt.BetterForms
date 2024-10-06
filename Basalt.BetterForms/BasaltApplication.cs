@@ -12,6 +12,8 @@ public static class BasaltApplication
 {
     internal static Exception? CrashException { get; set; }
 
+    internal static BasaltSettings? CurrentSettings { get; set; }
+
     internal static string MainDirectory { get; set; } = Environment.CurrentDirectory;
 
     /// <summary>
@@ -42,6 +44,8 @@ public static class BasaltApplication
         InitializeLogging(form.Text, MainDirectory, cmd);
         InitializeConfig<TSettings>(MainDirectory);
         InitializeUI(form);
+
+        CurrentSettings = settings = BasaltSettings.Load<TSettings>();
 
         Logger.Info($"Opening {form.Text}");
         InitializeCore(init, form, cmd, settings);
@@ -83,7 +87,7 @@ public static class BasaltApplication
     /// </summary>
     private static void InitializeConfig<TSettings>(string directory) where TSettings : BasaltSettings, new()
     {
-        BasaltSettings.Load<TSettings>(directory);
+        //BasaltSettings.Load<TSettings>();
     }
 
     /// <summary>

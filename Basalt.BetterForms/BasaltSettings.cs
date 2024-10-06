@@ -9,48 +9,45 @@ namespace Basalt.BetterForms;
 /// </summary>
 public class BasaltSettings
 {
-    internal WindowState Window { get; set; } = new();
+    public WindowSettings Window { get; set; } = new();
 
-    internal static BasaltSettings CurrentConfig { get; set; } = new();
-
-    internal class WindowState
-    {
-        public Point Location { get; set; }
-        public Size Size { get; set; }
-        public bool IsMaximized { get; set; } = true;
-    }
-
-    /// <summary>
-    /// Saves the current settings to the configuration file
-    /// </summary>
-    public void Save()
+    internal static TSettings Load<TSettings>() where TSettings : BasaltSettings, new()
     {
         string path = Path.Combine(BasaltApplication.MainDirectory, "Settings.cfg");
 
-        JsonSerializerSettings settings = new()
+        TSettings settings;
+        try
+        {
+            settings = JsonConvert.DeserializeObject<TSettings>(File.ReadAllText(path))!;
+        }
+        catch
+        {
+            Logger.Error($"Failed to read config from {path}");
+            settings = new TSettings();
+        }
+
+        Save(settings);
+        return settings;
+    }
+
+    internal static void Save(BasaltSettings settings)
+    {
+        string path = Path.Combine(BasaltApplication.MainDirectory, "Settings.cfg");
+
+        JsonSerializerSettings jss = new()
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
             Formatting = Formatting.Indented
         };
 
-        string json = JsonConvert.SerializeObject(this, settings);
+        string json = JsonConvert.SerializeObject(settings, jss);
         File.WriteAllText(path, json);
     }
+}
 
-    internal static void Load<TConfig>(string directory) where TConfig : BasaltSettings, new()
-    {
-        string path = Path.Combine(BasaltApplication.MainDirectory, "Settings.cfg");
-
-        try
-        {
-            CurrentConfig = JsonConvert.DeserializeObject<TConfig>(File.ReadAllText(path))!;
-        }
-        catch
-        {
-            Logger.Error($"Failed to read config from {path}");
-            CurrentConfig = new TConfig();
-        }
-
-        CurrentConfig.Save();
-    }
+public class WindowSettings
+{
+    public Point Location { get; set; }
+    public Size Size { get; set; }
+    public bool IsMaximized { get; set; } = true;
 }
