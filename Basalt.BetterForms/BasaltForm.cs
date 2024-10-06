@@ -19,7 +19,13 @@ public class BasaltForm : Form
     {
         CurrentVersion = new Version(0, 1, 0);
         Text = $"Basalt Application v{CurrentVersion.ToString(3)}";
+    }
 
+    /// <summary>
+    /// Attaches the open and close event handlers.  Can't do this in the contructor
+    /// </summary>
+    internal void AttachHandlers()
+    {
         Load += OnFormOpen;
         FormClosing += OnFormClose;
     }

@@ -87,6 +87,8 @@ public static class BasaltApplication
     {
         MethodInfo? method = form.GetType().GetMethod("InitializeComponent", BindingFlags.NonPublic | BindingFlags.Instance);
         method?.Invoke(form, Array.Empty<object>());
+
+        form.AttachHandlers();
     }
 
     /// <summary>
