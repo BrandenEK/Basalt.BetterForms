@@ -39,8 +39,6 @@ public class BasaltForm : Form
     /// </summary>
     private void OnFormOpen(object? _, EventArgs e)
     {
-        OnFormOpenPre();
-
         // Load window settings
         WindowSettings window = BasaltApplication.CurrentSettings.Window;
         WindowState = window.IsMaximized ? FormWindowState.Maximized : FormWindowState.Normal;
@@ -56,18 +54,8 @@ public class BasaltForm : Form
         Application.ThreadException += (_, e) => DisplayCrash(e.Exception);
 
         // Call event
-        OnFormOpenPost();
-    }
-
-    /// <summary>
-    /// Called before the exception check when the form is opened
-    /// </summary>
-    protected virtual void OnFormOpenPre() { }
-
-    /// <summary>
-    /// Called after the exception check when the form is opened
-    /// </summary>
-    protected virtual void OnFormOpenPost() { }
+        OnFormOpen();
+    }  
 
     /// <summary>
     /// Called when the form is closed 
@@ -97,6 +85,11 @@ public class BasaltForm : Form
         if (!e.Cancel)
             Logger.Info($"Closing {Text}");
     }
+
+    /// <summary>
+    /// Called when the form is opened
+    /// </summary>
+    protected virtual void OnFormOpen() { }
 
     /// <summary>
     /// Called when the form is closed
