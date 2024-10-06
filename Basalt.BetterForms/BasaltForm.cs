@@ -41,6 +41,13 @@ public class BasaltForm : Form
     {
         OnFormOpenPre();
 
+        // Load window settings
+        BasaltSettings.WindowSettings window = BasaltApplication.CurrentSettings.Window;
+        WindowState = window.IsMaximized ? FormWindowState.Maximized : FormWindowState.Normal;
+        Location = window.Location;
+        Size = window.Size;
+
+        // Handle crashing
         if (BasaltApplication.CrashException != null)
         {
             DisplayCrash(BasaltApplication.CrashException);
@@ -48,6 +55,7 @@ public class BasaltForm : Form
         }
         Application.ThreadException += (_, e) => DisplayCrash(e.Exception);
 
+        // Call event
         OnFormOpenPost();
     }
 
@@ -66,14 +74,26 @@ public class BasaltForm : Form
     /// </summary>
     private void OnFormClose(object? _, FormClosingEventArgs e)
     {
+        // Check if it is because of a crash
         if (BasaltApplication.CrashException != null)
         {
             Logger.Info($"Closing {Text}");
             return;
         }
 
+        // Call event
         OnFormClose(e);
 
+        // Save window settings
+        BasaltApplication.CurrentSettings.Window = new BasaltSettings.WindowSettings()
+        {
+            Location = WindowState == FormWindowState.Normal ? Location : RestoreBounds.Location,
+            Size = WindowState == FormWindowState.Normal ? Size : RestoreBounds.Size,
+            IsMaximized = WindowState == FormWindowState.Maximized
+        };
+        BasaltSettings.Save(BasaltApplication.CurrentSettings);
+
+        // Final message
         if (!e.Cancel)
             Logger.Info($"Closing {Text}");
     }

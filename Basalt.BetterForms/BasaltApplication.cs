@@ -12,8 +12,7 @@ public static class BasaltApplication
 {
     internal static Exception? CrashException { get; set; }
 
-    internal static BasaltSettings? CurrentSettings { get; set; }
-
+    internal static BasaltSettings CurrentSettings { get; set; } = new();
     internal static string MainDirectory { get; set; } = Environment.CurrentDirectory;
 
     /// <summary>
