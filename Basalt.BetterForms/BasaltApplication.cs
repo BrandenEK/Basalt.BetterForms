@@ -42,7 +42,6 @@ public static class BasaltApplication
         InitializeDirectories(directories);
         InitializeCommand(cmd);
         InitializeLogging(form.Text, MainDirectory, cmd);
-        InitializeConfig<TSettings>(MainDirectory);
         InitializeUI(form);
 
         CurrentSettings = settings = BasaltSettings.Load<TSettings>();
@@ -80,14 +79,6 @@ public static class BasaltApplication
         Logger.AddLogger(new FileLogger(directory));
         if (debug)
             Logger.AddLogger(new ConsoleLogger(title));
-    }
-
-    /// <summary>
-    /// Parses the configuration file
-    /// </summary>
-    private static void InitializeConfig<TSettings>(string directory) where TSettings : BasaltSettings, new()
-    {
-        //BasaltSettings.Load<TSettings>();
     }
 
     /// <summary>
