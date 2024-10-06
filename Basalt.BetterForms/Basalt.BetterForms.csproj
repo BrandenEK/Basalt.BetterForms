@@ -9,7 +9,7 @@
     <Title>Better Forms</Title>
     <Authors>Damocles</Authors>
     <Description>WinForms library for basalt applications</Description>
-    <Version>1.1.1</Version>
+    <Version>1.2.0</Version>
 
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -19,6 +19,7 @@
   <ItemGroup>
     <PackageReference Include="Basalt.CommandParser" Version="1.0.1" />
     <PackageReference Include="Basalt.Framework.Logging" Version="1.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
 </Project>
