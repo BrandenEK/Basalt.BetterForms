@@ -42,7 +42,7 @@ public class BasaltForm : Form
         OnFormOpenPre();
 
         // Load window settings
-        BasaltSettings.WindowSettings window = BasaltApplication.CurrentSettings.Window;
+        WindowSettings window = BasaltApplication.CurrentSettings.Window;
         WindowState = window.IsMaximized ? FormWindowState.Maximized : FormWindowState.Normal;
         Location = window.Location;
         Size = window.Size;
@@ -85,7 +85,7 @@ public class BasaltForm : Form
         OnFormClose(e);
 
         // Save window settings
-        BasaltApplication.CurrentSettings.Window = new BasaltSettings.WindowSettings()
+        BasaltApplication.CurrentSettings.Window = new WindowSettings()
         {
             Location = WindowState == FormWindowState.Normal ? Location : RestoreBounds.Location,
             Size = WindowState == FormWindowState.Normal ? Size : RestoreBounds.Size,

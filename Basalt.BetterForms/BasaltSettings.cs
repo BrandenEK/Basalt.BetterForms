@@ -46,25 +46,25 @@ public class BasaltSettings
         string json = JsonConvert.SerializeObject(settings, jss);
         File.WriteAllText(path, json);
     }
+}
+
+/// <summary>
+/// Settings related to the form window
+/// </summary>
+public class WindowSettings
+{
+    /// <summary>
+    /// The form location
+    /// </summary>
+    public Point Location { get; set; }
 
     /// <summary>
-    /// Settings related to the form window
+    /// The form size
     /// </summary>
-    public class WindowSettings
-    {
-        /// <summary>
-        /// The form location
-        /// </summary>
-        public Point Location { get; set; }
+    public Size Size { get; set; }
 
-        /// <summary>
-        /// The form size
-        /// </summary>
-        public Size Size { get; set; }
-
-        /// <summary>
-        /// Is the form maximized
-        /// </summary>
-        public bool IsMaximized { get; set; } = true;
-    }
+    /// <summary>
+    /// Is the form maximized
+    /// </summary>
+    public bool IsMaximized { get; set; } = true;
 }
