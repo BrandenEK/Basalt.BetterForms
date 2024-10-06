@@ -15,15 +15,16 @@ internal static class Program
     [STAThread]
     static void Main()
     {
-        BasaltApplication.Run<TestForm, TestCommand>(InitializeCore, "Test Application", new string[]
+        BasaltApplication.Run<TestForm, TestCommand, TestSettings>(InitializeCore, "Test Application", new string[]
         {
             ApplicationFolder, ApplicationSubFolder
         });
     }
 
-    static void InitializeCore(TestForm form, TestCommand cmd)
+    static void InitializeCore(TestForm form, TestCommand cmd, TestSettings settings)
     {
-        Logger.Info($"Test arg: {testCmd.TestArg}");
+        Logger.Info($"Test arg: {cmd.TestArg}");
+        Logger.Info($"Test setting: {settings.TextSetting}");
     }
 
     public static string ApplicationFolder { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TestApp");
@@ -40,14 +41,7 @@ namespace ExampleApplication;
 
 public partial class TestForm : BasaltForm
 {
-    protected override void OnFormOpenPre()
-    {
-        WindowState = FormWindowState.Normal;
-        Location = new Point(0, 0);
-        Size = new Size(1280, 720);
-    }
-
-    protected override void OnFormOpenPost()
+    protected override void OnFormOpen()
     {
         Logger.Debug("Form is successfully open and running code");
     }
@@ -65,5 +59,18 @@ public class TestCommand : BasaltCommand
 {
     [StringArgument('t', "test")]
     public string TestArg { get; set; } = string.Empty;
+}
+```
+
+### TestSettings.cs
+```cs
+using Basalt.BetterForms;
+
+namespace ExampleApplication;
+
+public class TestSettings : BasaltSettings
+{
+    public string TextSetting { get; set; }
+    public int NumericSetting { get; set; }
 }
 ```
