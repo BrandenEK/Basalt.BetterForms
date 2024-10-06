@@ -39,8 +39,13 @@ public class BasaltForm : Form
     /// </summary>
     private void OnFormOpen(object? _, EventArgs e)
     {
-        OnFormOpenPre();
+        // Load window settings
+        WindowSettings window = BasaltApplication.CurrentSettings.Window;
+        WindowState = window.IsMaximized ? FormWindowState.Maximized : FormWindowState.Normal;
+        Location = window.Location;
+        Size = window.Size;
 
+        // Handle crashing
         if (BasaltApplication.CrashException != null)
         {
             DisplayCrash(BasaltApplication.CrashException);
@@ -48,35 +53,43 @@ public class BasaltForm : Form
         }
         Application.ThreadException += (_, e) => DisplayCrash(e.Exception);
 
-        OnFormOpenPost();
-    }
-
-    /// <summary>
-    /// Called before the exception check when the form is opened
-    /// </summary>
-    protected virtual void OnFormOpenPre() { }
-
-    /// <summary>
-    /// Called after the exception check when the form is opened
-    /// </summary>
-    protected virtual void OnFormOpenPost() { }
+        // Call event
+        OnFormOpen();
+    }  
 
     /// <summary>
     /// Called when the form is closed 
     /// </summary>
     private void OnFormClose(object? _, FormClosingEventArgs e)
     {
+        // Check if it is because of a crash
         if (BasaltApplication.CrashException != null)
         {
             Logger.Info($"Closing {Text}");
             return;
         }
 
+        // Call event
         OnFormClose(e);
 
+        // Save window settings
+        BasaltApplication.CurrentSettings.Window = new WindowSettings()
+        {
+            Location = WindowState == FormWindowState.Normal ? Location : RestoreBounds.Location,
+            Size = WindowState == FormWindowState.Normal ? Size : RestoreBounds.Size,
+            IsMaximized = WindowState == FormWindowState.Maximized
+        };
+        BasaltSettings.Save(BasaltApplication.CurrentSettings);
+
+        // Final message
         if (!e.Cancel)
             Logger.Info($"Closing {Text}");
     }
+
+    /// <summary>
+    /// Called when the form is opened
+    /// </summary>
+    protected virtual void OnFormOpen() { }
 
     /// <summary>
     /// Called when the form is closed
