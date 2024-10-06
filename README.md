@@ -1,6 +1,6 @@
 # Better Windows Forms
 
-Implements logging, crash handling, and command parsing in a WinForms application
+Implements logging, configuration, crash handling, and command parsing in a WinForms application
 
 ### Program.cs
 
