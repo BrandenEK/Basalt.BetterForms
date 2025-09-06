@@ -47,9 +47,9 @@ public class BasaltForm : Form
     {
         // Load window settings
         WindowSettings window = BasaltApplication.CurrentSettings.Window;
-        WindowState = window.IsMaximized ? FormWindowState.Maximized : FormWindowState.Normal;
         Location = window.Location;
         Size = window.Size;
+        WindowState = window.IsMaximized ? FormWindowState.Maximized : FormWindowState.Normal;
 
         // Handle crashing
         if (BasaltApplication.CrashException != null)
