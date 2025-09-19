@@ -41,12 +41,36 @@ public class BasaltForm : Form
     }
 
     /// <summary>
+    /// Checks if a point is contained in any screen's bounds
+    /// </summary>
+    private static bool IsPointOnScreen(Point point)
+    {
+        foreach (var screen in Screen.AllScreens)
+        {
+            var bounds = new Rectangle(screen.Bounds.Location, screen.Bounds.Size - new Size(100, 100));
+            if (bounds.Contains(point))
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Called when the form is opened
     /// </summary>
     private void OnFormOpen(object? _, EventArgs e)
     {
         // Load window settings
         WindowSettings window = BasaltApplication.CurrentSettings.Window;
+
+        // Validate window settings
+        if (!IsPointOnScreen(window.Location))
+        {
+            Logger.Error($"Window position {window.Location} is not within screen bounds");
+            window.Location = new Point(0, 0);
+        }
+
+        // Restore window settings
         Location = window.Location;
         Size = window.Size;
         WindowState = window.IsMaximized ? FormWindowState.Maximized : FormWindowState.Normal;
