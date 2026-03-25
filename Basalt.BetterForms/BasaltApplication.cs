@@ -19,36 +19,40 @@ public static class BasaltApplication
     /// Begins running a basalt application on the main thread
     /// </summary>
     /// <typeparam name="TForm">The type of form to create</typeparam>
-    /// <typeparam name="TCommand">The type of command to create</typeparam>
+    /// <typeparam name="TArguments">The type of arguments to create</typeparam>
     /// <typeparam name="TSettings">The type of settings to create</typeparam>
     /// <param name="init">Initialization method to run after the form is created</param>
     /// <param name="title">Title of the application</param>
     /// <param name="directories">Directories that need to be created</param>
-    public static void Run<TForm, TCommand, TSettings>(Action<TForm, TCommand, TSettings> init, string title, IEnumerable<string> directories) where TForm : BasaltForm, new() where TCommand : BasaltCommand, new() where TSettings : BasaltSettings, new()
+    public static void Run<TForm, TArguments, TSettings>(Action<TForm, TArguments, TSettings> init, string title, IEnumerable<string> directories) where TForm : BasaltForm, new() where TArguments : BasaltArguments, new() where TSettings : BasaltSettings, new()
     {
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
         Application.SetHighDpiMode(HighDpiMode.SystemAware);
 
         TForm form = new();
-        TCommand cmd = new();
+        TArguments args = InitializeArguments<TArguments>();
         TSettings settings = new();
 
         MainDirectory = directories.First();
-        form.CurrentVersion = cmd.GetType().Assembly.GetName().Version ?? new(0, 1, 0);
+        form.CurrentVersion = args.GetType().Assembly.GetName().Version ?? new(0, 1, 0);
         form.Text = $"{title} v{form.CurrentVersion.ToString(3)}";
 
         InitializeDirectories(directories);
-        InitializeCommand(cmd);
-        InitializeLogging(form.Text, MainDirectory, cmd);
+        InitializeLogging(form.Text, MainDirectory, args);
         InitializeUI(form);
 
         CurrentSettings = settings = BasaltSettings.Load<TSettings>();
 
         Logger.Info($"Opening {form.Text}");
-        InitializeCore(init, form, cmd, settings);
+        InitializeCore(init, form, args, settings);
 
         Application.Run(form);
+    }
+
+    private static TArguments InitializeArguments<TArguments>() where TArguments : BasaltArguments, new()
+    {
+        return CommandParser.CommandParser.ProcessArguments<TArguments>(Environment.GetCommandLineArgs());
     }
 
     /// <summary>
@@ -61,19 +65,11 @@ public static class BasaltApplication
     }
 
     /// <summary>
-    /// Parses the cmd line arguments into the command data
-    /// </summary>
-    private static void InitializeCommand(BasaltCommand cmd)
-    {
-        TryWithCrashHandling(() => cmd.Process(Environment.GetCommandLineArgs()));
-    }
-
-    /// <summary>
     /// Adds the loggers
     /// </summary>
-    private static void InitializeLogging(string title, string directory, BasaltCommand cmd)
+    private static void InitializeLogging(string title, string directory, BasaltArguments args)
     {
-        bool debug = cmd.DebugMode || cmd.GetType().Assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(x => x.IsJITTrackingEnabled);
+        bool debug = args.DebugMode || args.GetType().Assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(x => x.IsJITTrackingEnabled);
 
         Logger.AddLogger(new FileLogger(directory));
         if (debug)
@@ -94,9 +90,9 @@ public static class BasaltApplication
     /// <summary>
     /// Calls the InitCore method
     /// </summary>
-    private static void InitializeCore<TForm, TCommand, TSettings>(Action<TForm, TCommand, TSettings> init, TForm form, TCommand cmd, TSettings settings)
+    private static void InitializeCore<TForm, TArguments, TSettings>(Action<TForm, TArguments, TSettings> init, TForm form, TArguments args, TSettings settings)
     {
-        TryWithCrashHandling(() => init(form, cmd, settings));
+        TryWithCrashHandling(() => init(form, args, settings));
     }
 
     private static void TryWithCrashHandling(Action action)
