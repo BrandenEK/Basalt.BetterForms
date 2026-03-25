@@ -60,20 +60,32 @@ public class BasaltForm : Form
     /// </summary>
     private void OnFormOpen(object? _, EventArgs e)
     {
-        // Load window settings
-        WindowSettings window = BasaltApplication.CurrentSettings.Window;
-
-        // Validate window settings
-        if (!IsPointOnScreen(window.Location))
+        Logger.Warn("enter");
+        try
         {
-            Logger.Error($"Window position {window.Location} is not within screen bounds");
-            window.Location = new Point(0, 0);
-        }
+            // Load window settings
+            WindowSettings window = BasaltApplication.CurrentSettings.Window;
+            Logger.Warn("load window");
 
-        // Restore window settings
-        Location = window.Location;
-        Size = window.Size;
-        WindowState = window.IsMaximized ? FormWindowState.Maximized : FormWindowState.Normal;
+            // Validate window settings
+            if (!IsPointOnScreen(window.Location))
+            {
+                Logger.Error($"Window position {window.Location} is not within screen bounds");
+                window.Location = new Point(0, 0);
+            }
+            Logger.Warn("check screen");
+
+            // Restore window settings
+            Location = window.Location;
+            Size = window.Size;
+            WindowState = window.IsMaximized ? FormWindowState.Maximized : FormWindowState.Normal;
+
+            Logger.Warn("restore window");
+        }
+        catch (Exception ex)
+        {
+            BasaltApplication.CrashException = ex;
+        }
 
         // Handle crashing
         if (BasaltApplication.CrashException != null)
@@ -82,6 +94,7 @@ public class BasaltForm : Form
             return;
         }
         Application.ThreadException += (_, e) => DisplayCrash(e.Exception);
+        Logger.Warn("handle crash");
 
         // Call event
         OnFormOpen();
