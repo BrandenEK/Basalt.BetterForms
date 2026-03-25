@@ -24,7 +24,7 @@ public static class BasaltApplication
     /// <param name="init">Initialization method to run after the form is created</param>
     /// <param name="title">Title of the application</param>
     /// <param name="directories">Directories that need to be created</param>
-    public static void Run<TForm, TCommand, TSettings>(Action<TForm, TCommand, TSettings> init, string title, IEnumerable<string> directories) where TForm : BasaltForm, new() where TCommand : BasaltCommand, new() where TSettings : BasaltSettings, new()
+    public static void Run<TForm, TCommand, TSettings>(Action<TForm, TCommand, TSettings> init, string title, IEnumerable<string> directories) where TForm : BasaltForm, new() where TCommand : BasaltArguments, new() where TSettings : BasaltSettings, new()
     {
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
@@ -63,7 +63,7 @@ public static class BasaltApplication
     /// <summary>
     /// Parses the cmd line arguments into the command data
     /// </summary>
-    private static void InitializeCommand(BasaltCommand cmd)
+    private static void InitializeCommand(BasaltArguments cmd)
     {
         TryWithCrashHandling(() => cmd.Process(Environment.GetCommandLineArgs()));
     }
@@ -71,7 +71,7 @@ public static class BasaltApplication
     /// <summary>
     /// Adds the loggers
     /// </summary>
-    private static void InitializeLogging(string title, string directory, BasaltCommand cmd)
+    private static void InitializeLogging(string title, string directory, BasaltArguments cmd)
     {
         bool debug = cmd.DebugMode || cmd.GetType().Assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(x => x.IsJITTrackingEnabled);
 
