@@ -21,7 +21,7 @@ public class BasaltSettings
         TSettings settings;
         try
         {
-            settings = JsonConvert.DeserializeObject<TSettings>(File.ReadAllText(path))!;
+            settings = JsonConvert.DeserializeObject<TSettings>(File.ReadAllText(path)) ?? new TSettings();
         }
         catch
         {
